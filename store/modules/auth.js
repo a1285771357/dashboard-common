@@ -56,52 +56,52 @@ export default {
     ...initialState,
   },
   mutations: {
-    SET_SCOPE (state, payload) {
+    SET_SCOPE(state, payload) {
       setScopeInCookie(payload)
       state.scope = payload
     },
-    SET_TENANT (state, payload) {
+    SET_TENANT(state, payload) {
       setTenantInCookie(payload)
       state.tenant = payload
     },
-    SET_REGION (state, payload) {
+    SET_REGION(state, payload) {
       setRegionInCookie(payload)
       state.region = payload
     },
-    RESET_COOKIE (state, payload) {
+    RESET_COOKIE(state, payload) {
       state.scope = 'project'
       state.tenant = ''
       removeTenantInCookie()
       removeScopeInCookie()
     },
-    UPDATE_AUTH (state) {
+    UPDATE_AUTH(state) {
       const token = getTokenFromCookie()
       const auth = decodeToken(token)
       state.token = token
       state.auth = auth
     },
-    SET_INFO (state, payload) {
+    SET_INFO(state, payload) {
       state.info = payload
     },
-    SET_CAPABILITY (state, payload) {
+    SET_CAPABILITY(state, payload) {
       state.capability = payload
     },
-    SET_PERMISSION (state, payload) {
+    SET_PERMISSION(state, payload) {
       state.permission = payload
     },
-    SET_SCOPERESOURCE (state, payload) {
+    SET_SCOPERESOURCE(state, payload) {
       state.scopeResource = payload
     },
-    SET_REGIONS (state, payload) {
+    SET_REGIONS(state, payload) {
       state.regions = payload
     },
-    SET_REGISTERS_STATUS (state, payload) {
+    SET_REGISTERS_STATUS(state, payload) {
       state.registersStatus = payload
     },
-    SET_LOGIN_FORM_DATA (state, payload) {
+    SET_LOGIN_FORM_DATA(state, payload) {
       state.loginFormData = payload
     },
-    UPDATE_HISTORY_USERS (state, payload) {
+    UPDATE_HISTORY_USERS(state, payload) {
       const newVal = { ...state.historyUsers }
       if (payload.action === 'delete') {
         delete newVal[payload.key]
@@ -132,7 +132,7 @@ export default {
       setHistoryUsersInStorage(newVal)
       state.historyUsers = newVal
     },
-    UPDATE_LOGGED_USERS (state, payload) {
+    UPDATE_LOGGED_USERS(state, payload) {
       // 如果是cas登录则不保存信息
       if (state.info && state.info.idp_driver === 'cas') return
       // 如果是sso登录则不保存信息
@@ -167,10 +167,10 @@ export default {
       setLoggedUsersInStorage(newVal)
       state.loggedUsers = newVal
     },
-    SET_CAN_RENDER_DEFAULT_LAYOUT (state, payload) {
+    SET_CAN_RENDER_DEFAULT_LAYOUT(state, payload) {
       state.canRenderDefaultLayout = payload
     },
-    LOGOUT (state) {
+    LOGOUT(state) {
       state.token = null
       state.auth = {}
       state.loginFormData = {}
@@ -183,37 +183,37 @@ export default {
   },
   getters: {
     // 是否切换到管理后台
-    isAdmin (state) {
+    isAdmin(state) {
       return state.scope === SCOPES_MAP.system.key
     },
     // 是否切换到域管理后台
-    isDomain (state) {
+    isDomain(state) {
       return state.scope === SCOPES_MAP.domain.key
     },
     // 当前用户是否有含有 system 权限 项目
-    isSystemAdmin (state) {
+    isSystemAdmin(state) {
       return state.info.projects.some(item => item.id === state.info.projectId && item.system_capable)
     },
     // 当前用户是否有含有 domain 权限 项目
-    isDomainAdmin (state) {
+    isDomainAdmin(state) {
       return state.info.projects.some(item => item.id === state.info.projectId && item.domain_capable)
     },
     // 是否在管理后台视图下
-    isAdminMode (state, getters) {
+    isAdminMode(state, getters) {
       return getters.isAdmin && getters.isSystemAdmin
     },
     // 是否在域管理后台视图下
-    isDomainMode (state, getters) {
+    isDomainMode(state, getters) {
       return getters.isDomain && getters.isDomainAdmin
     },
     // 是否在项目视图下
-    isProjectMode (state, getters) {
+    isProjectMode(state, getters) {
       return !getters.isAdminMode && !getters.isDomainMode
     },
-    l3PermissionEnable (state) {
+    l3PermissionEnable(state) {
       return state.info.non_default_domain_projects
     },
-    currentScopeResource (state, getters) {
+    currentScopeResource(state, getters) {
       const ret = [...ALL_RESOURCES]
       const systemResource = state.scopeResource && state.scopeResource.system
       const domainResource = state.scopeResource && state.scopeResource.domain
@@ -237,17 +237,18 @@ export default {
       })
       return ret
     },
-    currentLoggedUserKey (state) {
+    currentLoggedUserKey(state) {
       return `${state.info.name}@${state.info.domain.name}`
     },
-    currentHistoryUserKey (state) {
+    currentHistoryUserKey(state) {
       return state.auth.user || state.loginFormData.username
     },
   },
   actions: {
-    async login ({ commit, state }, data) {
+    async login({ commit, state }, data) {
       try {
         const _data = { ...data }
+        console.log('打印日志', data)
         let matchedUser
         if (_data.username) {
           if (_data.domain) {
@@ -284,7 +285,7 @@ export default {
         throw error
       }
     },
-    async logout ({ commit }, data) {
+    async logout({ commit }, data) {
       try {
         const response = await http.post('/v1/auth/logout', data)
         await commit('LOGOUT')
@@ -299,7 +300,7 @@ export default {
     /**
      * @description Get user info
      */
-    async getInfo ({ commit, state, getters }) {
+    async getInfo({ commit, state, getters }) {
       try {
         const response = await http.get('/v1/auth/user')
         if (!response.data) {
@@ -323,7 +324,7 @@ export default {
         throw error
       }
     },
-    async getCapabilities ({ commit, state }) {
+    async getCapabilities({ commit, state }) {
       try {
         const response = await http.get('/v2/capabilities', {
           params: {
@@ -337,7 +338,7 @@ export default {
         throw error
       }
     },
-    async getPermission ({ commit, state }) {
+    async getPermission({ commit, state }) {
       try {
         const data = R.map(item => [state.scope, ...item], PERMISSION)
         const response = await http.post('/v1/auth/permissions', data)
@@ -347,7 +348,7 @@ export default {
         throw error
       }
     },
-    async getScopeResource ({ commit }) {
+    async getScopeResource({ commit }) {
       try {
         const response = await http.get('/v1/auth/scoped_resources')
         const data = R.map(item => {
@@ -359,7 +360,7 @@ export default {
         throw error
       }
     },
-    async getRegions ({ commit, state }) {
+    async getRegions({ commit, state }) {
       try {
         const response = await http.get('/v1/auth/regions')
         // 如果当前region不在regions列表中，则重新设置region
@@ -376,7 +377,7 @@ export default {
         throw error
       }
     },
-    async getRegistersStatus ({ commit }) {
+    async getRegistersStatus({ commit }) {
       try {
         const response = await http.get('/v1/registers/status')
         await commit('SET_REGISTERS_STATUS', response.data.status === 'true')
@@ -386,7 +387,7 @@ export default {
       }
     },
     // 登录后所做的后续处理
-    async onAfterLogin ({ commit, state, dispatch, getters }, payload) {
+    async onAfterLogin({ commit, state, dispatch, getters }, payload) {
       const totp_on = state.auth.totp_on
       const system_totp_on = state.auth.system_totp_on
       const totp_verified = state.auth.totp_verified
@@ -462,7 +463,7 @@ export default {
         }
       }
     },
-    async validPasscode ({ commit }, data) {
+    async validPasscode({ commit }, data) {
       try {
         const response = await http.post('/v1/auth/passcode', data)
         return response.data
@@ -470,7 +471,7 @@ export default {
         throw error
       }
     },
-    async getRecovery ({ commit }, params) {
+    async getRecovery({ commit }, params) {
       try {
         const response = await http.get('/v1/auth/recovery', { params })
         return response.data
@@ -478,7 +479,7 @@ export default {
         throw error
       }
     },
-    async setRecovery ({ commit }, data) {
+    async setRecovery({ commit }, data) {
       try {
         const response = await http.post('/v1/auth/recovery', data)
         return response.data
@@ -486,7 +487,7 @@ export default {
         throw error
       }
     },
-    async credential ({ commit }, data) {
+    async credential({ commit }, data) {
       try {
         const response = await http.post('/v1/auth/credential', data)
         return response.data
@@ -494,7 +495,7 @@ export default {
         throw error
       }
     },
-    async initcredential ({ commit, getters }, data) {
+    async initcredential({ commit, getters }, data) {
       try {
         const response = await http.post('/v1/auth/initcredential', data)
         await await commit('UPDATE_HISTORY_USERS', {

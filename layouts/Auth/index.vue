@@ -8,7 +8,7 @@
             <img class="auth-header-logo" :src="loginLogo" />
           </div>
           <!-- 多语言切换按钮 -->
-          <div class="auth-header-right flex-fill d-flex justify-content-end">
+          <!-- <div class="auth-header-right flex-fill d-flex justify-content-end">
             <a-dropdown :trigger="['click']">
               <div class="oc-pointer">
                 <a-icon type="global" />
@@ -23,7 +23,7 @@
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
     </div>
     <!-- auth layout footer -->
     <div class="position-fixed w-100 text-center text-color-help footer">
-      <p class="text-color-help m-0 p-0">{{ copyright }}</p>
+      <!-- <p class="text-color-help m-0 p-0">{{ copyright }}</p> -->
       <template v-if="!isChrome">
         <p class="mini-text m-0 p-0 pt-2" style="color: rgba(255, 255, 255, .2);">{{ $t('common.text00110') }}</p>
       </template>

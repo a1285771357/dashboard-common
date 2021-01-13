@@ -3,7 +3,7 @@
     <div class="login-index-left flex-fill pr-4">
       <h2>{{ $t('login.desc1') }}</h2>
       <h4>{{ $t('login.desc2') }}</h4>
-      <h6>{{ $t('login.desc3') }}</h6>
+      <!-- <h6>{{ $t('login.desc3') }}</h6> -->
     </div>
     <div class="login-index-right d-flex flex-column shadow-lg bg-white rounded">
       <!-- login form -->
